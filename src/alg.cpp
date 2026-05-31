@@ -1,13 +1,15 @@
 // Copyright 2021 NNTU-CS
 #include "bst.h"
-#include <fstream>
-#include <iostream>
+
 #include <algorithm>
 #include <cctype>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
 static bool isLatinLetter(char c) {
-    return (c >= 'a' && c <= 'z') ||
-        (c >= 'A' && c <= 'Z');
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
 void makeTree(BST<std::string>& tree, const char* filename) {
@@ -22,10 +24,10 @@ void makeTree(BST<std::string>& tree, const char* filename) {
         int ch = file.get();
         if (!file) break;
 
-        if (isLatinLetter(ch)) {
-            word.push_back(static_cast<char>(std::tolower(ch)));
-        }
-        else {
+        if (isLatinLetter(static_cast<char>(ch))) {
+            char lower = static_cast<char>(std::tolower(ch));
+            word.push_back(lower);
+        } else {
             if (!word.empty()) {
                 tree.insert(word);
                 word.clear();
@@ -36,19 +38,17 @@ void makeTree(BST<std::string>& tree, const char* filename) {
     if (!word.empty()) {
         tree.insert(word);
     }
-
-    file.close();
 }
 
 void printFreq(BST<std::string>& tree) {
-    auto vec = tree.toVector();
+    std::vector<std::pair<std::string, int>> vec = tree.toVector();
 
     std::sort(vec.begin(), vec.end(),
-        [](const auto& a, const auto& b) {
-            if (a.second != b.second)
-                return a.second > b.second;
-            return a.first < b.first;
-        });
+              [](const std::pair<std::string, int>& a,
+                 const std::pair<std::string, int>& b) {
+                  if (a.second != b.second) return a.second > b.second;
+                  return a.first < b.first;
+              });
 
     std::ofstream out("result/freq.txt");
 
@@ -56,6 +56,4 @@ void printFreq(BST<std::string>& tree) {
         std::cout << p.first << " " << p.second << "\n";
         out << p.first << " " << p.second << "\n";
     }
-
-    out.close();
 }

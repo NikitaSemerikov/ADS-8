@@ -26,7 +26,8 @@ void makeTree(BST<std::string>& tree, const char* filename) {
         if (!file) break;
 
         if (isLatinLetter(static_cast<char>(ch))) {
-            word.push_back(static_cast<char>(std::tolower(ch)));
+            char lower = static_cast<char>(std::tolower(ch));
+            word.push_back(lower);
         } else {
             if (!word.empty()) {
                 tree.insert(word);
@@ -41,7 +42,8 @@ void makeTree(BST<std::string>& tree, const char* filename) {
 }
 
 void printFreq(BST<std::string>& tree) {
-    std::vector<std::pair<std::string, int>> vec = tree.toVector();
+    std::vector<std::pair<std::string, int>> vec;
+    tree.getFreqList(vec);
 
     std::sort(vec.begin(), vec.end(),
               [](const std::pair<std::string, int>& a,

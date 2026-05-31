@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <utility>
 
 template <typename T>
 class BST {
@@ -49,4 +50,35 @@ class BST {
 
     void collect(Node* node, std::vector<std::pair<T, int>>& out) const {
         if (!node) return;
-        collect(node->left
+        collect(node->left, out);
+        out.emplace_back(node->key, node->freq);
+        collect(node->right, out);
+    }
+
+    void clear(Node* node) {
+        if (!node) return;
+        clear(node->left);
+        clear(node->right);
+        delete node;
+    }
+
+ public:
+    BST() : root(nullptr) {}
+    ~BST() { clear(root); }
+
+    void insert(const T& value) { insertNode(root, value); }
+
+    bool search(const T& value) const {
+        return searchNode(root, value) != nullptr;
+    }
+
+    int depth() const { return depthNode(root); }
+
+    std::vector<std::pair<T, int>> toVector() const {
+        std::vector<std::pair<T, int>> v;
+        collect(root, v);
+        return v;
+    }
+};
+
+#endif  // INCLUDE_BST_H_

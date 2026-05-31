@@ -1,6 +1,3 @@
-// Copyright 2021 NNTU-CS
-#include "bst.h"
-
 #include <algorithm>
 #include <cctype>
 #include <fstream>
@@ -8,6 +5,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#include "bst.h"
 
 static bool isLatinLetter(char c) {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');

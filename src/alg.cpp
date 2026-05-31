@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 static bool isLatinLetter(char c) {
@@ -25,8 +26,7 @@ void makeTree(BST<std::string>& tree, const char* filename) {
         if (!file) break;
 
         if (isLatinLetter(static_cast<char>(ch))) {
-            char lower = static_cast<char>(std::tolower(ch));
-            word.push_back(lower);
+            word.push_back(static_cast<char>(std::tolower(ch)));
         } else {
             if (!word.empty()) {
                 tree.insert(word);

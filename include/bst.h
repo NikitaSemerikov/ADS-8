@@ -11,48 +11,49 @@ class BST {
  private:
     struct Node {
         T key;
-        int freq;
+        int count;
         Node* left;
         Node* right;
 
-        explicit Node(const T& k) : key(k), freq(1), left(nullptr), right(nullptr) {}
+        explicit Node(const T& k)
+            : key(k), count(1), left(nullptr), right(nullptr) {}
     };
 
     Node* root;
 
-    void insertNode(Node*& node, const T& value) {
+    Node* addNode(Node* node, const T& value) {
         if (!node) {
-            node = new Node(value);
-            return;
+            return new Node(value);
         }
         if (value < node->key) {
-            insertNode(node->left, value);
+            node->left = addNode(node->left, value);
         } else if (value > node->key) {
-            insertNode(node->right, value);
+            node->right = addNode(node->right, value);
         } else {
-            node->freq++;
+            node->count++;
         }
-    }
-
-    Node* searchNode(Node* node, const T& value) const {
-        if (!node) return nullptr;
-        if (value < node->key) return searchNode(node->left, value);
-        if (value > node->key) return searchNode(node->right, value);
         return node;
     }
 
-    int depthNode(Node* node) const {
+    int searchNode(Node* node, const T& value) const {
         if (!node) return 0;
-        int dl = depthNode(node->left);
-        int dr = depthNode(node->right);
-        return 1 + (dl > dr ? dl : dr);
+        if (value == node->key) return node->count;
+        if (value < node->key) return searchNode(node->left, value);
+        return searchNode(node->right, value);
     }
 
-    void collect(Node* node, std::vector<std::pair<T, int>>& out) const {
+    int depthNode(Node* node) const {
+        if (!node) return -1;  // <-- ВАЖНО: высота пустого = -1
+        int dl = depthNode(node->left);
+        int dr = depthNode(node->right);
+        return (dl > dr ? dl : dr) + 1;
+    }
+
+    void inorder(Node* node, std::vector<std::pair<T, int>>& out) const {
         if (!node) return;
-        collect(node->left, out);
-        out.emplace_back(node->key, node->freq);
-        collect(node->right, out);
+        inorder(node->left, out);
+        out.emplace_back(node->key, node->count);
+        inorder(node->right, out);
     }
 
     void clear(Node* node) {
@@ -66,18 +67,14 @@ class BST {
     BST() : root(nullptr) {}
     ~BST() { clear(root); }
 
-    void insert(const T& value) { insertNode(root, value); }
+    void insert(const T& value) { root = addNode(root, value); }
 
-    bool search(const T& value) const {
-        return searchNode(root, value) != nullptr;
-    }
+    int search(const T& value) const { return searchNode(root, value); }
 
     int depth() const { return depthNode(root); }
 
-    std::vector<std::pair<T, int>> toVector() const {
-        std::vector<std::pair<T, int>> v;
-        collect(root, v);
-        return v;
+    void getFreqList(std::vector<std::pair<T, int>>& out) const {
+        inorder(root, out);
     }
 };
 

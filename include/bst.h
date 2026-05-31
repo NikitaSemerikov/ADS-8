@@ -43,7 +43,7 @@ class BST {
     }
 
     int depthNode(Node* node) const {
-        if (!node) return -1;  // <-- ВАЖНО: высота пустого = -1
+        if (!node) return -1;  // высота пустого дерева
         int dl = depthNode(node->left);
         int dr = depthNode(node->right);
         return (dl > dr ? dl : dr) + 1;
